@@ -12,13 +12,22 @@ passport.use(new GoogleStrategy(
   }
   , (accessToken, refreshToken, profile, done) => {
     //passport callback function
-    console.log(profile);
+    // check if user already exists in DB
+    User.findOne({ googleId: profile.id }).then((currentUser) => {
+      if (currentUser) {
+        //already have a user
+        console.log("user is: " + currentUser);
+      } else {
 
-    new User({
-      username: profile.displayName,
-      googleId: profile.id
-    }).save().then((newUser) => {
-      console.log("new user created: " + newUser);
+        new User({
+          username: profile.displayName,
+          googleId: profile.id
+        }).save().then((newUser) => {
+          console.log("new user created: " + newUser);
+        })
+
+      }
     })
+
 
   }))
