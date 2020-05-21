@@ -3,6 +3,10 @@ const GoogleStrategy = require("passport-google-oauth20");
 const keys = require("./keys");
 const User = require("../models/user-model");
 
+passport.serializeUser((user, done) => {
+  done(null, user.id)
+})
+
 passport.use(new GoogleStrategy(
   {
     //options for the strategy
@@ -17,6 +21,7 @@ passport.use(new GoogleStrategy(
       if (currentUser) {
         //already have a user
         console.log("user is: " + currentUser);
+        done(null, currentUser);
       } else {
 
         new User({
@@ -24,6 +29,7 @@ passport.use(new GoogleStrategy(
           googleId: profile.id
         }).save().then((newUser) => {
           console.log("new user created: " + newUser);
+          done(null, newUser);
         })
 
       }
